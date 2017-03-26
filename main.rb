@@ -7,11 +7,11 @@ require 'logger'
 CMD_WIN_H = 4
 RECIPE_WIN_W = 20
 
+logger = Logger.new("./log/app.log")
 filepath = ARGV[0]
 
 Curses.init_screen
 Curses.curs_set(0)  # Invisible cursor
-logger = Logger.new("./logs/app.log")
 
 begin
   # recipe window for list of commands
