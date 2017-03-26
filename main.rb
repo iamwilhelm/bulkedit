@@ -5,6 +5,7 @@ require 'csv'
 require 'logger'
 
 require './view/recipe'
+require './view/cmd'
 require './cmd_parser'
 require './msg'
 
@@ -29,13 +30,8 @@ begin
   recipe_view.render
 
   # command window to enter in commands
-  cmdwin = Curses::Window.new(CMD_WIN_H, CMD_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
-  cmdwin.keypad = true    # interpret keypad
-  # cmdwin.nodelay = true  # don't wait for user input
-  cmdwin.box("|", "-")
-  cmdwin.setpos(1, 2)
-  cmdwin.addstr("$ ")
-  cmdwin.refresh
+  cmd_view = View::Cmd.new(CMD_WIN_H, CMD_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
+  cmd_view.render
 
   # In this window, there will be data
   datawin = Curses::Window.new(DATA_WIN_H, DATA_WIN_W * 2, 0, RECIPE_WIN_W)
@@ -56,7 +52,7 @@ begin
   cmd_parser = CmdParser.new
 
   while true do
-    key = cmdwin.getch
+    key = cmd_view.getch
     # send key to command parser
     cmd_parser.input(key) do |msg|
       case msg.type
@@ -78,7 +74,8 @@ begin
     datawin.addstr(dataset[:headers].join("\t")[0..DATA_WIN_W * 3 / 4].concat("\n"))
     datawin.addstr(dataset[:data].map { |row| row.to_a.map { |f| f[1] }.join("\t") }.join("\n"))
     datawin.refresh
-    cmdwin.refresh
+
+    cmd_view.render
   end
 
 rescue => err
