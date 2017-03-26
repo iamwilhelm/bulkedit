@@ -4,8 +4,10 @@ require 'curses'
 require 'csv'
 require 'logger'
 
+require './model/root'
 require './view/recipe'
 require './view/cmd'
+require './view/table'
 require './cmd_parser'
 require './msg'
 
@@ -25,19 +27,6 @@ DATA_WIN_H = Curses.lines - CMD_WIN_H
 DATA_WIN_W = Curses.cols - RECIPE_WIN_W
 
 begin
-  # recipe window for list of commands
-  recipe_view = View::Recipe.new(RECIPE_WIN_H, RECIPE_WIN_W, 0, 0)
-  recipe_view.render
-
-  # command window to enter in commands
-  cmd_view = View::Cmd.new(CMD_WIN_H, CMD_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
-  cmd_view.render
-
-  # In this window, there will be data
-  datawin = Curses::Window.new(DATA_WIN_H, DATA_WIN_W * 2, 0, RECIPE_WIN_W)
-  datawin.setpos(0, 0)
-  datawin.refresh
-
   # load the data
   dataset = {}
   CSV.open(filepath, headers: true) do |csv|
@@ -45,9 +34,13 @@ begin
     dataset[:headers] = csv.headers
   end
 
+  model = Model::Root.new(dataset)
 
-  model = {
-  }
+  recipe_view = View::Recipe.new(model, RECIPE_WIN_H, RECIPE_WIN_W, 0, 0)
+  cmd_view = View::Cmd.new(model, CMD_WIN_H, CMD_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
+  table_view = View::Table.new(model, DATA_WIN_H, DATA_WIN_W * 2, 0, RECIPE_WIN_W)
+  views = [recipe_view, cmd_view, table_view]
+  views.each { |view| view.render }
 
   cmd_parser = CmdParser.new
 
@@ -71,11 +64,7 @@ begin
 
     # up in this loop, we call every view to blit on to the screen
 
-    datawin.addstr(dataset[:headers].join("\t")[0..DATA_WIN_W * 3 / 4].concat("\n"))
-    datawin.addstr(dataset[:data].map { |row| row.to_a.map { |f| f[1] }.join("\t") }.join("\n"))
-    datawin.refresh
-
-    cmd_view.render
+    views.each { |view| view.render }
   end
 
 rescue => err

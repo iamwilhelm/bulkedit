@@ -2,8 +2,8 @@ require_relative './base'
 
 module View
   class Recipe < Base
-    def initialize(r, c, t, l)
-      super(r, c, t, l)
+    def initialize(model, r, c, t, l)
+      super(model, r, c, t, l)
 
       @window.box("|", "-")
     end
