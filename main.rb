@@ -4,6 +4,11 @@ require 'curses'
 require 'csv'
 require 'logger'
 
+require './view/recipe'
+require './cmd_parser'
+require './msg'
+
+
 logger = Logger.new("./log/app.log")
 filepath = ARGV[0]
 
@@ -20,9 +25,8 @@ DATA_WIN_W = Curses.cols - RECIPE_WIN_W
 
 begin
   # recipe window for list of commands
-  recipewin = Curses::Window.new(RECIPE_WIN_H, RECIPE_WIN_W, 0, 0)
-  recipewin.box("|", "-")
-  recipewin.refresh
+  recipe_view = View::Recipe.new(RECIPE_WIN_H, RECIPE_WIN_W, 0, 0)
+  recipe_view.render
 
   # command window to enter in commands
   cmdwin = Curses::Window.new(CMD_WIN_H, CMD_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
@@ -44,12 +48,36 @@ begin
     dataset[:data] = csv.read
     dataset[:headers] = csv.headers
   end
-  datawin.addstr(dataset[:headers].join("\t").concat("\n"))
-  datawin.addstr(dataset[:data].map { |row| row.to_a.map { |f| f[1] }.join("\t") }.join("\n"))
-  datawin.refresh
+
+
+  model = {
+  }
+
+  cmd_parser = CmdParser.new
 
   while true do
     key = cmdwin.getch
+    # send key to command parser
+    cmd_parser.input(key) do |msg|
+      case msg.type
+      when Msg.FILTER
+        # change the model
+      else
+        logger.info "Unknown message type"
+      end
+    end
+
+    # command parser decides on complete message to send to command router
+
+    # command router triggers action to update different models based on message
+
+    # when dataset model gets message to X, it will change the dataset.
+
+    # up in this loop, we call every view to blit on to the screen
+
+    datawin.addstr(dataset[:headers].join("\t")[0..DATA_WIN_W * 3 / 4].concat("\n"))
+    datawin.addstr(dataset[:data].map { |row| row.to_a.map { |f| f[1] }.join("\t") }.join("\n"))
+    datawin.refresh
     cmdwin.refresh
   end
 
