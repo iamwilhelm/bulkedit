@@ -4,23 +4,28 @@ require 'curses'
 require 'csv'
 require 'logger'
 
-CMD_WIN_H = 4
-RECIPE_WIN_W = 20
-
 logger = Logger.new("./log/app.log")
 filepath = ARGV[0]
 
 Curses.init_screen
+Curses.start_color if Curses.has_colors?
 Curses.curs_set(0)  # Invisible cursor
+
+RECIPE_WIN_H = Curses.lines
+RECIPE_WIN_W = 20
+CMD_WIN_H = 4
+CMD_WIN_W = Curses.cols - RECIPE_WIN_W
+DATA_WIN_H = Curses.lines - CMD_WIN_H
+DATA_WIN_W = Curses.cols - RECIPE_WIN_W
 
 begin
   # recipe window for list of commands
-  recipewin = Curses::Window.new(Curses.lines, RECIPE_WIN_W, 0, 0)
+  recipewin = Curses::Window.new(RECIPE_WIN_H, RECIPE_WIN_W, 0, 0)
   recipewin.box("|", "-")
   recipewin.refresh
 
   # command window to enter in commands
-  cmdwin = Curses::Window.new(CMD_WIN_H, Curses.cols - RECIPE_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
+  cmdwin = Curses::Window.new(CMD_WIN_H, CMD_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
   cmdwin.keypad = true    # interpret keypad
   # cmdwin.nodelay = true  # don't wait for user input
   cmdwin.box("|", "-")
@@ -29,7 +34,8 @@ begin
   cmdwin.refresh
 
   # In this window, there will be data
-  datawin = Curses::Window.new(Curses.lines - CMD_WIN_H, Curses.cols - RECIPE_WIN_W, 0, RECIPE_WIN_W)
+  datawin = Curses::Window.new(DATA_WIN_H, DATA_WIN_W * 2, 0, RECIPE_WIN_W)
+  datawin.setpos(0, 0)
   datawin.refresh
 
   # load the data
