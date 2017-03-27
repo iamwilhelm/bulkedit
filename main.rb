@@ -17,8 +17,10 @@ filepath = ARGV[0]
 
 Curses.init_screen
 Curses.start_color if Curses.has_colors?
+$logger.info "Can change color? #{Curses.can_change_color?}"
 Curses.curs_set(0)  # Invisible cursor
 Curses.noecho       # don't echo the keyboard. We'll handle all the writing
+Curses.init_pair(1, Curses::COLOR_RED, Curses::COLOR_WHITE)
 
 RECIPE_WIN_H = Curses.lines
 RECIPE_WIN_W = 20
@@ -56,8 +58,7 @@ begin
         $logger.info "change projection of dataset to select"
 
       when Msg::HIGHLIGHT_FIELD
-        $logger.info "highlight fields"
-
+        model.highlight_fields = msg[:fields]
       else
         $logger.error "Unknown message type: #{msg[:type]}"
       end

@@ -1,6 +1,7 @@
 module Model
   class Root
     attr_reader :dataset, :cmd_str
+    attr_accessor :highlight_fields
 
     # TODO need a way to communicate what changed...so views know when to refresh
     def initialize(dataset)

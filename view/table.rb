@@ -10,14 +10,43 @@ module View
     def render
       @window.clear
 
-      # have to use view parameters of model to calculate a projection of the current dataset
+      @model.dataset[:headers].each do |header|
+        if @model.highlight_fields.include?(header)
+          @window.addstr("*")
+          @window.addstr(header)
+          @window.addstr("*")
+        else
+          @window.addstr(header)
+        end
+        @window.addstr("\t")
+      end
+      @window.addstr("\n")
+      @window.addstr("-" * @cols)
 
-      # color the columns
-
-      #@window.addstr(@model.dataset[:headers].join("\t")[0..DATA_WIN_W * 3 / 4].concat("\n"))
-      #@window.addstr(@model.dataset[:data].map { |row| row.to_a.map { |f| f[1] }.join("\t") }.join("\n"))
+      # have to use view parameters of model to calculate a projection
+      cropped_data = @model.dataset[:data]
+      cropped_data.each { |row|
+        row.to_a.each { |f|
+          if @model.highlight_fields.include?(f[0])
+            @window.addstr("*")
+            @window.addstr(f[1])
+            @window.addstr("*")
+          else
+            @window.addstr(f[1])
+          end
+          @window.addstr("\t")
+        }
+        @window.addstr("\n")
+      }
 
       @window.refresh
+    end
+
+    def header_to_s(header)
+      header.join("\t").concat("\n")
+    end
+
+    def row_to_s(row)
     end
   end
 end
