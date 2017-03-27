@@ -1,4 +1,4 @@
-require_relative './parser'
+require_relative './cmd_box'
 
 module CmdBox
   class Router
@@ -45,7 +45,14 @@ module CmdBox
       # parse the command
       ast = CmdBox.parse(@model.cmd_str)
 
-      # if it's a complete command, yield to block
+      return if ast.nil?
+      if !ast[:error].nil?
+        $logger.info "AST has errors"
+        return
+      end
+
+      msg = CmdBox.ast_to_msg(ast)
+      block.call(msg)
 
       # otherwise, update the model as to what went wrong
     end

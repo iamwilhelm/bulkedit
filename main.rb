@@ -49,16 +49,16 @@ begin
   while true do
     router.input(cmd_view.getch).route do |msg|
       case msg[:type]
-      when Msg.FILTER
+      when Msg::FILTER
         # change projection of dataset to filter?
-      when Msg.SELECT
+      when Msg::SELECT
         # change projection of dataset to select
-      when Msg.SORT
+      when Msg::SORT
         # change projection
-      when Msg.MAP
+      when Msg::MAP
         # change projection
       else
-        $logger.error "Unknown message type: #{msg.type}"
+        $logger.error "Unknown message type: #{msg[:type]}"
       end
     end
 
