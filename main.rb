@@ -12,8 +12,7 @@ require './cmd_parser'
 require './msg'
 
 
-logger = Logger.new("./log/app.log")
-$logger = logger
+$logger = Logger.new("./log/app.log")
 filepath = ARGV[0]
 
 Curses.init_screen
@@ -49,28 +48,25 @@ begin
 
   while true do
     key = cmd_view.getch
-    # send key to command parser
     cmd_parser.input(key) do |msg|
-      case msg.type
+      case msg[:type]
       when Msg.FILTER
-        # change the model
+        # change projection of dataset to filter?
+      when Msg.SELECT
+        # change projection of dataset to select
+      when Msg.SORT
+        # change projection
+      when Msg.MAP
+        # change projection
       else
-        logger.info "Unknown message type"
+        $logger.error "Unknown message type: #{msg.type}"
       end
     end
-
-    # command parser decides on complete message to send to command router
-
-    # command router triggers action to update different models based on message
-
-    # when dataset model gets message to X, it will change the dataset.
-
-    # up in this loop, we call every view to blit on to the screen
 
     views.each { |view| view.render }
   end
 
 rescue => err
-  logger.error [err.message, err.backtrace.join("\n")].join("\n")
+  $logger.error [err.message, err.backtrace.join("\n")].join("\n")
   Curses.close_screen
 end
