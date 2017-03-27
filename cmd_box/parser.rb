@@ -77,10 +77,19 @@ module CmdBox
       return node
     end
 
+    def match(rule_proc, parent_node, &errblock)
+      child_node = rule_proc.call
+      return errblock.call if node_error?(child_node)
+
+      parent_node[:children].push(child_node)
+      return node
+    end
+
     def command(token)
+      $logger.info "command: #{token}"
+
       node = { type: :command, value: nil, children: [], pos: @index }
 
-      $logger.info "command: #{token}"
       child_node = expression(token)
       if node_error?(child_node)
         unwind_token(1)
@@ -136,7 +145,14 @@ module CmdBox
         node[:children].push(child_node)
       end
 
-      #injest_token do |token|
+      ingest_token do |token|
+        child_node = expression(token)
+        if node_error?(child_node)
+          unwind_token(2)
+          return append_error_to(node, "Need subsequent boolean expression")
+        end
+        node[:children].push(child_node)
+      end
 
       commit_ingestion
 
@@ -227,7 +243,6 @@ module CmdBox
         return { type: :identifier, value: token, children: [], pos: @index, error: "Not valid identifier" }
       end
     end
-
   end
 
 end
