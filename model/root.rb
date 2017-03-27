@@ -31,6 +31,14 @@ module Model
       $logger.info @cmd_str
     end
 
+    def move_cursor_to_beginning
+      @cursor[:col] = 0
+    end
+
+    def move_cursor_to_end
+      @cursor[:col] = @cmd_str.length
+    end
+
     def move_cursor_left()
       return if @cursor[:col] == 0
       @cursor[:col] -= 1

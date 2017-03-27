@@ -25,8 +25,20 @@ module CmdBox
         # do nothing
       elsif char == Curses::Key::DOWN
         # do nothing
+      elsif char == 1  # beginning of line
+        @model.move_cursor_to_beginning
+      elsif char == 5  # end of line
+        @model.move_cursor_to_end
       else
-        @model.add_char_at_cursor(char)
+        begin
+          @model.add_char_at_cursor(char)
+        rescue TypeError => err
+          if err.message =~ /no implicit conversion of Fixnum into String/
+            $logger.error "Don't know what to do with key: #{char}"
+          else
+            throw err
+          end
+        end
       end
 
       # parse the command
