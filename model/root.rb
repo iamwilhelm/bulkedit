@@ -17,7 +17,14 @@ module Model
     end
 
     def remove_char_at_cursor()
+      @cursor[:col] -= 1
+      if @cursor[:col] < 0
+        @cursor[:col] = 0
+        return
+      end
+      
       @cmd_str.slice!(@cursor[:col])
+      $logger.info @cmd_str
     end
 
     def move_cursor_left()

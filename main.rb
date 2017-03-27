@@ -8,7 +8,7 @@ require './model/root'
 require './view/recipe'
 require './view/cmd'
 require './view/table'
-require './cmd_parser'
+require './cmd_box/router'
 require './msg'
 
 
@@ -44,11 +44,10 @@ begin
   views = [recipe_view, cmd_view, table_view]
   views.each { |view| view.render }
 
-  cmd_parser = CmdParser.new(model)
+  router = CmdBox::Router.new(model)
 
   while true do
-    key = cmd_view.getch
-    cmd_parser.input(key) do |msg|
+    router.input(cmd_view.getch) do |msg|
       case msg[:type]
       when Msg.FILTER
         # change projection of dataset to filter?
