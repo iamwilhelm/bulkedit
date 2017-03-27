@@ -47,7 +47,7 @@ begin
   router = CmdBox::Router.new(model)
 
   while true do
-    router.input(cmd_view.getch) do |msg|
+    router.input(cmd_view.getch).route do |msg|
       case msg[:type]
       when Msg.FILTER
         # change projection of dataset to filter?

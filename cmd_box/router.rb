@@ -6,11 +6,8 @@ module CmdBox
       @model = model
     end
 
-    def input(char, &block)
-      # move cursor around and add to or remove
-      $logger.info
-
-      $logger.info char
+    def input(char)
+      # move cursor around and add to or remove to the command string
       if char == 127 # backspace
         @model.remove_char_at_cursor()
       elsif char == 10 # enter
@@ -41,11 +38,16 @@ module CmdBox
         end
       end
 
+      return self
+    end
+
+    def route(&block)
       # parse the command
+      ast = CmdBox.parse(@model.cmd_str)
 
       # if it's a complete command, yield to block
 
-      # otherwise, return where it's wrong (and update the model?)
+      # otherwise, update the model as to what went wrong
     end
 
   end
