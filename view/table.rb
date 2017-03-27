@@ -14,8 +14,8 @@ module View
 
       # color the columns
 
-      @window.addstr(@model.dataset[:headers].join("\t")[0..DATA_WIN_W * 3 / 4].concat("\n"))
-      @window.addstr(@model.dataset[:data].map { |row| row.to_a.map { |f| f[1] }.join("\t") }.join("\n"))
+      #@window.addstr(@model.dataset[:headers].join("\t")[0..DATA_WIN_W * 3 / 4].concat("\n"))
+      #@window.addstr(@model.dataset[:data].map { |row| row.to_a.map { |f| f[1] }.join("\t") }.join("\n"))
 
       @window.refresh
     end

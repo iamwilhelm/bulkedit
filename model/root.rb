@@ -9,6 +9,7 @@ module Model
       @focus = :cmd
       @transforms = []
       @cmd_str = ""
+      @highlight_fields = []
     end
 
     def cursor_col

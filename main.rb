@@ -50,13 +50,14 @@ begin
     router.input(cmd_view.getch).route do |msg|
       case msg[:type]
       when Msg::FILTER
-        # change projection of dataset to filter?
+        $logger.info "change projection of dataset to filter"
+
       when Msg::SELECT
-        # change projection of dataset to select
-      when Msg::SORT
-        # change projection
-      when Msg::MAP
-        # change projection
+        $logger.info "change projection of dataset to select"
+
+      when Msg::HIGHLIGHT_FIELD
+        $logger.info "highlight fields"
+
       else
         $logger.error "Unknown message type: #{msg[:type]}"
       end
