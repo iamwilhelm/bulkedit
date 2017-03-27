@@ -3,4 +3,5 @@ module Msg
   SELECT = 1
   SORT = 2
   MAP = 32
+
 end

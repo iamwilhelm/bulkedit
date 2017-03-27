@@ -13,11 +13,13 @@ require './msg'
 
 
 logger = Logger.new("./log/app.log")
+$logger = logger
 filepath = ARGV[0]
 
 Curses.init_screen
 Curses.start_color if Curses.has_colors?
 Curses.curs_set(0)  # Invisible cursor
+Curses.noecho       # don't echo the keyboard. We'll handle all the writing
 
 RECIPE_WIN_H = Curses.lines
 RECIPE_WIN_W = 20
@@ -39,10 +41,11 @@ begin
   recipe_view = View::Recipe.new(model, RECIPE_WIN_H, RECIPE_WIN_W, 0, 0)
   cmd_view = View::Cmd.new(model, CMD_WIN_H, CMD_WIN_W, Curses.lines - CMD_WIN_H, RECIPE_WIN_W)
   table_view = View::Table.new(model, DATA_WIN_H, DATA_WIN_W * 2, 0, RECIPE_WIN_W)
+
   views = [recipe_view, cmd_view, table_view]
   views.each { |view| view.render }
 
-  cmd_parser = CmdParser.new
+  cmd_parser = CmdParser.new(model)
 
   while true do
     key = cmd_view.getch

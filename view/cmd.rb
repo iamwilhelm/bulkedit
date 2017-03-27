@@ -12,7 +12,16 @@ module View
       @window.addstr("$ ")
     end
 
+    def setup
+      @window.box("|", "-")
+      @window.setpos(1, 2)
+      @window.addstr("$ ")
+    end
+
     def render
+      @window.clear
+      setup
+      @window.addstr(@model.cmd_str)
       @window.refresh
     end
 

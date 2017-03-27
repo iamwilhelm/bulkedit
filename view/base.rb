@@ -9,5 +9,6 @@ module View
 
       @window = Curses::Window.new(@rows, @cols, @top, @left)
     end
+
   end
 end
