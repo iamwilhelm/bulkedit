@@ -11,6 +11,10 @@ module Model
       @cmd_str = ""
     end
 
+    def cursor_col
+      return @cursor[:col]
+    end
+
     def add_char_at_cursor(char)
       @cmd_str.insert(@cursor[:col], char)
       @cursor[:col] += 1
@@ -22,7 +26,7 @@ module Model
         @cursor[:col] = 0
         return
       end
-      
+
       @cmd_str.slice!(@cursor[:col])
       $logger.info @cmd_str
     end
