@@ -8,6 +8,8 @@ module CmdBox
 
     def input(char, &block)
       # move cursor around and add to or remove
+      $logger.info
+
       $logger.info char
       if char == 127 # backspace
         @model.remove_char_at_cursor()
@@ -15,6 +17,14 @@ module CmdBox
         $logger.info "Execute command?"
       elsif char == 27 # escape
         $logger.info "Escape mode"
+      elsif char == Curses::Key::LEFT
+        @model.move_cursor_left
+      elsif char == Curses::Key::RIGHT
+        @model.move_cursor_right
+      elsif char == Curses::Key::UP
+        # do nothing
+      elsif char == Curses::Key::DOWN
+        # do nothing
       else
         @model.add_char_at_cursor(char)
       end
